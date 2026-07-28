@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}My Fee Balance{% endblock %}
+{% block content %}
+<h3><i class="bi bi-cash-coin"></i> My Fee Balance</h3>
+<div class="table-responsive">
+<table class="table table-striped bg-white">
+  <thead><tr><th>Fee Type</th><th>Due</th><th>Paid</th><th>Balance</th></tr></thead>
+  <tbody>
+    {% for inv in invoices %}
+    <tr>
+      <td>{{ inv.fee_type }}</td>
+      <td>D{{ inv.amount_due }}</td>
+      <td>D{{ inv.amount_paid }}</td>
+      <td class="{% if inv.balance > 0 %}text-danger{% else %}text-success{% endif %}">D{{ inv.balance }}</td>
+    </tr>
+    {% empty %}<tr><td colspan="4" class="text-muted text-center">No invoices on record.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

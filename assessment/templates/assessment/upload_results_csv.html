@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block title %}Upload Grades (CSV){% endblock %}
+{% block content %}
+<h3><i class="bi bi-upload"></i> Bulk Upload Grades via CSV</h3>
+<p class="text-muted">Upload continuous assessment and exam scores for many students at once instead of typing them in one by one.</p>
+
+<div class="row">
+  <div class="col-md-5">
+    <div class="card dashboard-card p-4">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Term</label>
+          {% render_field form.term class="form-select" %}
+        </div>
+        <div class="mb-3">
+          <label class="form-label">CSV File</label>
+          {% render_field form.csv_file %}
+          <div class="form-text">{{ form.csv_file.help_text }}</div>
+          {% if form.csv_file.errors %}<div class="text-danger small">{{ form.csv_file.errors }}</div>{% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-upload"></i> Upload &amp; Process</button>
+      </form>
+    </div>
+
+    <div class="card dashboard-card p-3 mt-3">
+      <h6><i class="bi bi-info-circle"></i> CSV Format</h6>
+      <p class="small text-muted mb-1">Header row required, exactly these 4 columns:</p>
+      <pre class="bg-light p-2 small rounded">student_id,subject_code,ca_score,exam_score
+SCH-2026-0001,MATH101,32,55
+SCH-2026-0002,MATH101,28,49</pre>
+      <ul class="small text-muted mb-0">
+        <li><strong>student_id</strong> &mdash; must match an existing Student ID exactly (e.g. SCH-2026-0001).</li>
+        <li><strong>subject_code</strong> &mdash; must match an existing Subject code (see Academics &gt; Subjects in /admin/).</li>
+        <li><strong>ca_score</strong> &mdash; Continuous Assessment, 0&ndash;40.</li>
+        <li><strong>exam_score</strong> &mdash; Examination score, 0&ndash;60.</li>
+        <li>A plain Teacher can only upload subjects they are assigned to teach. Senior Teachers, Vice Principals and the Principal can upload for any subject.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-md-7">
+    {% if result_rows %}
+    <div class="card dashboard-card p-3">
+      <h6>Upload Result &mdash; {{ log_entry.rows_success }} saved / {{ log_entry.rows_failed }} failed (of {{ log_entry.rows_total }} rows)</h6>
+      <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+        <table class="table table-sm table-striped">
+          <thead><tr><th>Line</th><th>Student ID</th><th>Subject</th><th>Status</th><th>Detail</th></tr></thead>
+          <tbody>
+            {% for row in result_rows %}
+            <tr class="{% if row.status == 'failed' %}table-danger{% else %}table-success{% endif %}">
+              <td>{{ row.line }}</td>
+              <td>{{ row.student_id }}</td>
+              <td>{{ row.subject_code }}</td>
+              <td>{% if row.status == 'success' %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}<i class="bi bi-x-circle-fill text-danger"></i>{% endif %}</td>
+              <td class="small">{{ row.detail }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% else %}
+    <div class="card dashboard-card p-4 text-muted text-center">
+      Upload a CSV to see a row-by-row result here.
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

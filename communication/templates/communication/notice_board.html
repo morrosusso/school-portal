@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Notice Board{% endblock %}
+{% block content %}
+<h3><i class="bi bi-megaphone"></i> Notice Board</h3>
+{% for n in notices %}
+<div class="card dashboard-card p-3 mb-2 {% if n.pinned %}border-warning{% endif %}">
+  <div class="d-flex justify-content-between">
+    <h5>{% if n.pinned %}<i class="bi bi-pin-angle-fill text-warning"></i>{% endif %} {{ n.title }}</h5>
+    <span class="text-muted small">{{ n.posted_on|date:"d M Y, H:i" }}</span>
+  </div>
+  <p class="mb-0">{{ n.body }}</p>
+  <span class="text-muted small">Posted by {{ n.posted_by }}</span>
+</div>
+{% empty %}
+<p class="text-muted">No notices yet.</p>
+{% endfor %}
+{% endblock %}

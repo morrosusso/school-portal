@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ student }}{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-8">
+    <div class="card dashboard-card p-4">
+      <h4>{{ student.first_name }} {{ student.last_name }} <span class="badge bg-secondary">{{ student.student_id }}</span></h4>
+      <table class="table table-sm mt-3">
+        <tr><th>Class</th><td>{{ student.current_class|default:"Not yet assigned" }}</td></tr>
+        <tr><th>DOB</th><td>{{ student.date_of_birth }}</td></tr>
+        <tr><th>Gender</th><td>{{ student.get_gender_display }}</td></tr>
+        <tr><th>Guardian</th><td>{{ student.guardian_name }} - {{ student.guardian_phone }}</td></tr>
+        <tr><th>Address</th><td>{{ student.address }}</td></tr>
+        <tr><th>Date Admitted</th><td>{{ student.date_admitted }}</td></tr>
+      </table>
+
+      {% if user.is_admin_permission %}
+        <a href="{% url 'assessment:download_transcript' student.pk %}" class="btn btn-danger">
+          <i class="bi bi-shield-lock"></i> Download Official Transcript
+        </a>
+        <span class="text-muted small ms-2">Visible only to staff with admin permission.</span>
+      {% endif %}
+    </div>
+  </div>
+  {% if assign_form %}
+  <div class="col-md-4">
+    <div class="card dashboard-card p-3">
+      <h6>Assign Class</h6>
+      <form method="post">
+        {% csrf_token %}
+        {{ assign_form.current_class }}
+        <button class="btn btn-primary btn-sm mt-2">Save</button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

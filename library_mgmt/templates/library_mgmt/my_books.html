@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}My Borrowed Books{% endblock %}
+{% block content %}
+<h3><i class="bi bi-book"></i> My Borrowed Books</h3>
+<div class="table-responsive">
+<table class="table table-striped bg-white">
+  <thead><tr><th>Book</th><th>Borrowed On</th><th>Due Date</th><th>Status</th></tr></thead>
+  <tbody>
+    {% for r in records %}
+    <tr>
+      <td>{{ r.book }}</td><td>{{ r.borrowed_on }}</td><td>{{ r.due_date }}</td>
+      <td>{% if r.returned_on %}<span class="badge bg-success">Returned</span>
+          {% elif r.is_overdue %}<span class="badge bg-danger">Overdue</span>
+          {% else %}<span class="badge bg-warning text-dark">Borrowed</span>{% endif %}</td>
+    </tr>
+    {% empty %}<tr><td colspan="4" class="text-muted text-center">No borrowed books.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

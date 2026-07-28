@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Bursar Dashboard{% endblock %}
+{% block content %}
+<h3><i class="bi bi-speedometer2"></i> Bursar Dashboard</h3>
+<div class="row g-3 mt-2">
+  <div class="col-md-4"><div class="stat-card red"><div class="small">Outstanding Fees (D)</div><h2>{{ outstanding_fees }}</h2></div></div>
+</div>
+<div class="row g-3 mt-3">
+  <div class="col-md-3"><a href="{% url 'finance:overview' %}" class="card dashboard-card p-3 text-decoration-none text-dark"><i class="bi bi-cash-stack fs-3"></i><div>Finance Overview</div></a></div>
+</div>
+{% include "core/dashboards/_notices.html" %}
+{% endblock %}

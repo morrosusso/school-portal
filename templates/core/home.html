@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Welcome{% endblock %}
+{% block content %}
+<div class="hero mb-4">
+  <h1><i class="bi bi-mortarboard-fill"></i> {{ SCHOOL_NAME }}</h1>
+  <p class="lead">{{ SCHOOL_MOTTO }} &mdash; Academic Session {{ CURRENT_SESSION }}</p>
+  {% if not user.is_authenticated %}
+    <a href="{% url 'students:apply' %}" class="btn btn-lg btn-warning fw-bold me-2">Apply for Admission</a>
+    <a href="{% url 'accounts:login' %}" class="btn btn-lg btn-outline-light">Staff / Student / Parent Login</a>
+  {% else %}
+    <a href="{% url 'core:dashboard' %}" class="btn btn-lg btn-warning fw-bold">Go to My Dashboard</a>
+  {% endif %}
+</div>
+
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card dashboard-card p-3">
+      <i class="bi bi-people-fill fs-2 text-primary"></i>
+      <h5 class="mt-2">Student Records</h5>
+      <p class="text-muted mb-0">Admissions, biodata, attendance, discipline and academic history all in one place.</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card dashboard-card p-3">
+      <i class="bi bi-file-earmark-text fs-2 text-success"></i>
+      <h5 class="mt-2">Termly Reports</h5>
+      <p class="text-muted mb-0">Students download their published termly report cards directly as PDF.</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card dashboard-card p-3">
+      <i class="bi bi-shield-lock fs-2 text-danger"></i>
+      <h5 class="mt-2">Secure Transcripts</h5>
+      <p class="text-muted mb-0">Official transcripts are issued only by staff with administrative permission.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

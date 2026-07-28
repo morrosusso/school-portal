@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Timetable{% endblock %}
+{% block content %}
+<h3><i class="bi bi-calendar3"></i> Timetable</h3>
+<form method="get" class="mb-3 d-flex gap-2">
+  <select name="class_id" class="form-select w-auto">
+    <option value="">-- Select a class --</option>
+    {% for c in school_classes %}
+      <option value="{{ c.id }}" {% if selected_class_id == c.id|stringformat:"s" %}selected{% endif %}>{{ c.label }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn btn-outline-primary">View</button>
+</form>
+{% if slots %}
+<div class="table-responsive">
+<table class="table table-striped bg-white">
+  <thead><tr><th>Day</th><th>Period</th><th>Subject</th><th>Teacher</th><th>Room</th></tr></thead>
+  <tbody>
+    {% for s in slots %}
+    <tr><td>{{ s.get_day_display }}</td><td>{{ s.period }}</td><td>{{ s.subject }}</td><td>{{ s.teacher }}</td><td>{{ s.room }}</td></tr>
+    {% empty %}<tr><td colspan="5" class="text-muted text-center">No timetable slots yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<p class="text-muted">Select a class above, or if you're a teacher, your personal timetable shows automatically.</p>
+{% endif %}
+{% endblock %}

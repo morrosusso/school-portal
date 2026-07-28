@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Library Catalog{% endblock %}
+{% block content %}
+<h3><i class="bi bi-journal-bookmark"></i> Library Catalog</h3>
+<form method="get" class="mb-3 d-flex gap-2">
+  <input type="text" name="q" value="{{ query }}" class="form-control w-auto" placeholder="Search by title...">
+  <button class="btn btn-outline-primary">Search</button>
+</form>
+<div class="table-responsive">
+<table class="table table-striped bg-white">
+  <thead><tr><th>Title</th><th>Author</th><th>Category</th><th>Copies Available</th></tr></thead>
+  <tbody>
+    {% for b in books %}
+    <tr>
+      <td>{{ b.title }}</td><td>{{ b.author }}</td><td>{{ b.category }}</td>
+      <td>{{ b.copies_available }} / {{ b.total_copies }}</td>
+    </tr>
+    {% empty %}<tr><td colspan="4" class="text-muted text-center">No books catalogued yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

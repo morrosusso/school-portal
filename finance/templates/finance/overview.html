@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Finance Overview{% endblock %}
+{% block content %}
+<h3><i class="bi bi-cash-stack"></i> Finance Overview</h3>
+<div class="row g-3 mb-3">
+  <div class="col-md-4"><div class="stat-card navy"><div class="small">Total Due (D)</div><h2>{{ total_due }}</h2></div></div>
+  <div class="col-md-4"><div class="stat-card green"><div class="small">Total Paid (D)</div><h2>{{ total_paid }}</h2></div></div>
+  <div class="col-md-4"><div class="stat-card red"><div class="small">Outstanding (D)</div><h2>{{ outstanding }}</h2></div></div>
+</div>
+<div class="table-responsive">
+<table class="table table-striped bg-white">
+  <thead><tr><th>Student</th><th>Fee Type</th><th>Due</th><th>Paid</th><th>Balance</th></tr></thead>
+  <tbody>
+    {% for inv in invoices %}
+    <tr>
+      <td>{{ inv.student }}</td>
+      <td>{{ inv.fee_type }}</td>
+      <td>D{{ inv.amount_due }}</td>
+      <td>D{{ inv.amount_paid }}</td>
+      <td class="{% if inv.balance > 0 %}text-danger{% else %}text-success{% endif %}">D{{ inv.balance }}</td>
+    </tr>
+    {% empty %}<tr><td colspan="5" class="text-muted text-center">No invoices yet. Add fee types and invoices from /admin/.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

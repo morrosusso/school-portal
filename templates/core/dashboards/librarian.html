@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Librarian Dashboard{% endblock %}
+{% block content %}
+<h3><i class="bi bi-speedometer2"></i> Librarian Dashboard</h3>
+<div class="row g-3 mt-2">
+  <div class="col-md-4"><div class="stat-card red"><div class="small">Overdue Books</div><h2>{{ overdue_count }}</h2></div></div>
+</div>
+<div class="row g-3 mt-3">
+  <div class="col-md-3"><a href="{% url 'library_mgmt:catalog' %}" class="card dashboard-card p-3 text-decoration-none text-dark"><i class="bi bi-journal-bookmark fs-3"></i><div>Book Catalog</div></a></div>
+</div>
+{% include "core/dashboards/_notices.html" %}
+{% endblock %}

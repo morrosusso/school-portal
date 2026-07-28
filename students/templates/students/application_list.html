@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Applications{% endblock %}
+{% block content %}
+<h3><i class="bi bi-file-earmark-check"></i> Admission Applications</h3>
+<form method="get" class="mb-3 d-flex gap-2">
+  <select name="status" class="form-select w-auto">
+    <option value="">All statuses</option>
+    {% for value, label in statuses %}
+      <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn btn-outline-primary">Filter</button>
+</form>
+<div class="table-responsive">
+<table class="table table-striped bg-white">
+  <thead><tr><th>#</th><th>Name</th><th>Grade Applied</th><th>Guardian</th><th>Status</th><th>Submitted</th><th></th></tr></thead>
+  <tbody>
+    {% for app in page_obj %}
+    <tr>
+      <td>{{ app.id }}</td>
+      <td>{{ app.first_name }} {{ app.last_name }}</td>
+      <td>Grade {{ app.applying_for_grade }}</td>
+      <td>{{ app.guardian_name }} ({{ app.guardian_phone }})</td>
+      <td><span class="badge {% if app.status == 'ACCEPTED' %}bg-success{% elif app.status == 'REJECTED' %}bg-danger{% else %}bg-warning text-dark{% endif %}">{{ app.get_status_display }}</span></td>
+      <td>{{ app.submitted_on|date:"d M Y" }}</td>
+      <td><a href="{% url 'students:application_review' app.pk %}" class="btn btn-sm btn-outline-primary">Review</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="7" class="text-muted text-center">No applications found.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% if page_obj.has_other_pages %}
+<nav><ul class="pagination">
+  {% for p in page_obj.paginator.page_range %}
+    <li class="page-item {% if p == page_obj.number %}active{% endif %}"><a class="page-link" href="?page={{ p }}&status={{ status_filter }}">{{ p }}</a></li>
+  {% endfor %}
+</ul></nav>
+{% endif %}
+{% endblock %}

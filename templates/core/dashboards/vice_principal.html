@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Vice Principal Dashboard{% endblock %}
+{% block content %}
+<h3><i class="bi bi-speedometer2"></i> Vice Principal Dashboard</h3>
+<div class="row g-3 mt-2">
+  <div class="col-md-4"><div class="stat-card navy"><div class="small">Active Students</div><h2>{{ total_students }}</h2></div></div>
+  <div class="col-md-4"><div class="stat-card gold"><div class="small">Pending Applications</div><h2>{{ pending_applications }}</h2></div></div>
+  <div class="col-md-4"><div class="stat-card red"><div class="small">Outstanding Fees (D)</div><h2>{{ outstanding_fees }}</h2></div></div>
+</div>
+<div class="row g-3 mt-3">
+  <div class="col-md-3"><a href="{% url 'academics:timetable' %}" class="card dashboard-card p-3 text-decoration-none text-dark"><i class="bi bi-calendar3 fs-3"></i><div>Timetable Supervision</div></a></div>
+  <div class="col-md-3"><a href="{% url 'students:student_list' %}" class="card dashboard-card p-3 text-decoration-none text-dark"><i class="bi bi-people fs-3"></i><div>Students</div></a></div>
+  <div class="col-md-3"><a href="{% url 'students:application_list' %}" class="card dashboard-card p-3 text-decoration-none text-dark"><i class="bi bi-file-earmark-check fs-3"></i><div>Applications</div></a></div>
+</div>
+{% include "core/dashboards/_notices.html" %}
+{% endblock %}

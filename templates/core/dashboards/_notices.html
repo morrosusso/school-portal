@@ -1,0 +1,10 @@
+{% if recent_notices %}
+<div class="card dashboard-card p-3 mt-3">
+  <h6><i class="bi bi-megaphone"></i> Recent Notices</h6>
+  <ul class="list-group list-group-flush">
+    {% for n in recent_notices %}
+      <li class="list-group-item"><strong>{{ n.title }}</strong> <span class="text-muted small">- {{ n.posted_on|date:"d M Y" }}</span></li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}

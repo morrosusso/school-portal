@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}My Report Cards{% endblock %}
+{% block content %}
+<h3><i class="bi bi-file-earmark-text"></i> My Termly Report Cards</h3>
+<div class="table-responsive">
+<table class="table table-striped bg-white">
+  <thead><tr><th>Term</th><th>Average</th><th>Class Position</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+    {% for rc in report_cards %}
+    <tr>
+      <td>{{ rc.term }}</td>
+      <td>{{ rc.average_score|default:"-" }}</td>
+      <td>{{ rc.class_position|default:"-" }}</td>
+      <td>
+        {% if rc.is_published %}<span class="badge bg-success">Published</span>
+        {% else %}<span class="badge bg-secondary">Not yet published</span>{% endif %}
+      </td>
+      <td>
+        {% if rc.is_published %}
+        <a href="{% url 'assessment:download_report_card' rc.pk %}" class="btn btn-sm btn-success"><i class="bi bi-download"></i> Download PDF</a>
+        {% endif %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" class="text-muted text-center">No report cards yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

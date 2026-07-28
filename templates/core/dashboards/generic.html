@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Welcome, {{ user.get_full_name }}</h3>
+{% include "core/dashboards/_notices.html" %}
+{% endblock %}
