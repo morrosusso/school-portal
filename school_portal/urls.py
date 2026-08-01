@@ -21,5 +21,8 @@ urlpatterns = [
     path("communication/", include("communication.urls")),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve uploaded files (documents, photos) at all times, not just
+# DEBUG=True -- otherwise every uploaded-document link 404s in
+# production. This is fine for a small school's traffic level;
+# a larger deployment would move to cloud storage (S3, etc.) instead.
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

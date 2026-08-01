@@ -202,6 +202,28 @@ def student_list(request):
 
 
 @login_required
+@user_passes_test(_is_admissions_staff, login_url="core:dashboard")
+def reset_student_password(request, pk):
+    """
+    Lets admin-permission staff (Principal, VPs, Secretary, IT
+    Support) reset a student's forgotten password directly from the
+    portal, without needing to go into /admin/. Resets it back to
+    their Student ID -- the same simple, memorable scheme used when
+    their account was first created -- and the student can change it
+    again from their profile afterwards.
+    """
+    student = get_object_or_404(Student, pk=pk)
+    if request.method == "POST":
+        if not student.user:
+            messages.error(request, "This student has no login account to reset.")
+            return redirect("students:student_detail", pk=pk)
+        student.user.set_password(student.student_id)
+        student.user.save()
+        messages.success(request, f"Password reset for {student} -- new password is their Student ID ({student.student_id}).")
+    return redirect("students:student_detail", pk=pk)
+
+
+@login_required
 def student_detail(request, pk):
     student = get_object_or_404(Student, pk=pk)
     # Students/parents may only view their own record.
