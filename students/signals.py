@@ -43,20 +43,33 @@ def create_student_on_acceptance(sender, instance: Application, **kwargs):
 
         student_id = Student.generate_student_id()
 
-        # Auto-create a login account: username = student_id (lowercased),
-        # temporary password = student_id itself -- student is prompted
-        # to change it after first login (see LoginRequiredMiddleware
-        # equivalent check in core/views.py -> force_password_change flag
-        # left as a documented next step; kept simple here).
-        username = student_id.lower()
-        user = User.objects.create_user(
-            username=username,
-            password=student_id,
-            first_name=instance.first_name,
-            last_name=instance.last_name,
-            role="STUDENT",
-            email=instance.guardian_email or "",
-        )
+        # If the applicant signed up for their own account (the normal
+        # path: signup -> complete application -> track status), reuse
+        # that SAME account and just convert it into their official
+        # student login -- username and password both become the new
+        # Student ID, and the role flips from APPLICANT to STUDENT.
+        # This avoids ending up with two separate logins for one person.
+        #
+        # If there's no linked applicant account (e.g. an application
+        # entered directly by staff in /admin/ on someone's behalf),
+        # fall back to creating a brand new login as before.
+        if instance.user_id:
+            user = instance.user
+            user.username = student_id.lower()
+            user.set_password(student_id)
+            user.role = "STUDENT"
+            user.first_name = instance.first_name
+            user.last_name = instance.last_name
+            user.save()
+        else:
+            user = User.objects.create_user(
+                username=student_id.lower(),
+                password=student_id,
+                first_name=instance.first_name,
+                last_name=instance.last_name,
+                role="STUDENT",
+                email=instance.guardian_email or "",
+            )
 
         Student.objects.create(
             application=instance,

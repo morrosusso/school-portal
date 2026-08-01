@@ -3,50 +3,57 @@
 {% block title %}Apply for Admission{% endblock %}
 {% block content %}
 <div class="row justify-content-center">
-  <div class="col-md-8">
+  <div class="col-md-6">
     <div class="card dashboard-card p-4">
-      <h4 class="mb-1"><i class="bi bi-pencil-square"></i> Admission Application</h4>
-      <p class="text-muted">No account needed. Once your application is accepted, a Student ID and login are created for you automatically.</p>
-      <form method="post" enctype="multipart/form-data">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <h4 class="mb-1"><i class="bi bi-person-plus"></i> Create Your Applicant Account</h4>
+        <a href="{% url 'accounts:login' %}" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-box-arrow-in-right"></i> Login to Track Application
+        </a>
+      </div>
+      <p class="text-muted">Already started an application? Use the button above to log back in with your email and password.</p>
+      <p class="text-muted">Create your account below, then you'll complete the rest of your admission details, upload documents, and track your status from your applicant dashboard.</p>
+
+      <form method="post">
         {% csrf_token %}
+        {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
         <div class="row">
-          {% for field in form %}
-            <div class="col-md-6 mb-3">
-              <label class="form-label">{{ field.label }}</label>
-              {% render_field field %}
-              {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
-            </div>
-          {% endfor %}
+          <div class="col-md-6 mb-3">
+            <label class="form-label">First name</label>
+            {% render_field form.first_name %}
+            {% if form.first_name.errors %}<div class="text-danger small">{{ form.first_name.errors }}</div>{% endif %}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Last name</label>
+            {% render_field form.last_name %}
+            {% if form.last_name.errors %}<div class="text-danger small">{{ form.last_name.errors }}</div>{% endif %}
+          </div>
         </div>
-        <button type="submit" class="btn btn-primary">Submit Application</button>
+        <div class="mb-3">
+          <label class="form-label">Email address</label>
+          {% render_field form.email %}
+          {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors }}</div>{% endif %}
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Gender</label>
+          {% render_field form.gender %}
+          {% if form.gender.errors %}<div class="text-danger small">{{ form.gender.errors }}</div>{% endif %}
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Password</label>
+            {% render_field form.password %}
+            {% if form.password.errors %}<div class="text-danger small">{{ form.password.errors }}</div>{% endif %}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Confirm password</label>
+            {% render_field form.confirm_password %}
+            {% if form.confirm_password.errors %}<div class="text-danger small">{{ form.confirm_password.errors }}</div>{% endif %}
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Create Account</button>
       </form>
     </div>
   </div>
 </div>
-
-<script>
-  // Track (Science/Arts/Commerce) only matters for Grade 10-12
-  // applicants -- hide it otherwise so Grade 7-9 applicants aren't
-  // confused by an irrelevant field.
-  (function () {
-    var gradeField = document.getElementById("id_applying_for_grade");
-    var trackField = document.getElementById("id_applying_for_track");
-    if (!gradeField || !trackField) return;
-    var trackWrapper = trackField.closest(".col-md-6") || trackField.parentElement;
-
-    function toggleTrack() {
-      var seniorGrades = ["10", "11", "12"];
-      if (seniorGrades.includes(gradeField.value)) {
-        trackWrapper.style.display = "";
-        trackField.required = true;
-      } else {
-        trackWrapper.style.display = "none";
-        trackField.required = false;
-        trackField.value = "";
-      }
-    }
-    gradeField.addEventListener("change", toggleTrack);
-    toggleTrack();
-  })();
-</script>
 {% endblock %}

@@ -27,15 +27,24 @@ class Application(models.Model):
         MALE = "M", "Male"
         FEMALE = "F", "Female"
 
+    # Links this application to the applicant's own login account,
+    # created at signup (see students/views.py -> applicant_signup).
+    # Once the application is accepted, this SAME user account is
+    # converted into the official student login (see signals.py) --
+    # the applicant doesn't get a second, separate account.
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="applicant_application"
+    )
+
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1, choices=Gender.choices)
-    guardian_name = models.CharField(max_length=150)
-    guardian_phone = models.CharField(max_length=20)
+    guardian_name = models.CharField(max_length=150, blank=True)
+    guardian_phone = models.CharField(max_length=20, blank=True)
     guardian_email = models.EmailField(blank=True)
-    address = models.CharField(max_length=255)
-    applying_for_grade = models.CharField(max_length=2, choices=SchoolClass.GRADE_CHOICES)
+    address = models.CharField(max_length=255, blank=True)
+    applying_for_grade = models.CharField(max_length=2, choices=SchoolClass.GRADE_CHOICES, blank=True)
     applying_for_track = models.CharField(
         max_length=10, choices=[(t.value, t.label) for t in Track if t != Track.NONE],
         blank=True,
@@ -44,6 +53,12 @@ class Application(models.Model):
     previous_school = models.CharField(max_length=150, blank=True)
     passport_photo = models.ImageField(upload_to="applicant_photos/", blank=True, null=True)
     submitted_on = models.DateTimeField(auto_now_add=True)
+
+    # True once the applicant has filled in the full details below
+    # (grade, DOB, guardian info) -- distinguishes a bare signup
+    # (name/email/gender only) from a submitted application staff
+    # should actually review.
+    is_submitted = models.BooleanField(default=False)
 
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
     reviewed_by = models.ForeignKey(
@@ -62,6 +77,25 @@ class Application(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.get_status_display()}"
+
+
+class ApplicantDocument(models.Model):
+    """
+    Supporting documents an applicant uploads while their application
+    is pending -- previous exam results, birth certificate, etc.
+    Kept as a separate model (rather than fixed fields on Application)
+    so an applicant can attach as many as they need.
+    """
+    application = models.ForeignKey(Application, on_delete=models.CASCADE, related_name="documents")
+    label = models.CharField(max_length=100, help_text="e.g. 'Grade 6 Result Slip', 'Birth Certificate'")
+    file = models.FileField(upload_to="applicant_documents/")
+    uploaded_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-uploaded_on"]
+
+    def __str__(self):
+        return f"{self.label} - {self.application}"
 
 
 class Student(models.Model):

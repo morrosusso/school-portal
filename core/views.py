@@ -9,7 +9,7 @@ dashboard() -- single entry point after login; renders a different
 """
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from accounts.models import Role
 from students.models import Application, Student
@@ -44,6 +44,9 @@ ROLE_TEMPLATES = {
 @login_required
 def dashboard(request):
     user = request.user
+    if user.role == Role.APPLICANT:
+        return redirect("students:applicant_dashboard")
+
     template = ROLE_TEMPLATES.get(user.role, "core/dashboards/generic.html")
     context = {"recent_notices": [n for n in Notice.objects.all()[:5] if n.visible_to(user)]}
 

@@ -32,6 +32,7 @@ class Role(models.TextChoices):
     NON_TEACHING = "NON_TEACHING", "Non-Teaching Staff (Cleaner/Caretaker/Watchman)"
     PARENT = "PARENT", "Parent / Guardian"
     STUDENT = "STUDENT", "Student"
+    APPLICANT = "APPLICANT", "Applicant (pre-admission)"
     CLUSTER_MONITOR = "CLUSTER_MONITOR", "Cluster Monitor (MoBSE)"
 
 
@@ -72,7 +73,7 @@ class User(AbstractUser):
         # Django's is_staff flag controls access to /admin/ -- give it
         # automatically to every non-parent, non-student role so they
         # can use the Django admin as a power-user backend if needed.
-        if self.role and self.role not in (Role.PARENT, Role.STUDENT):
+        if self.role and self.role not in (Role.PARENT, Role.STUDENT, Role.APPLICANT):
             self.is_staff = True
         super().save(*args, **kwargs)
 

@@ -30,6 +30,10 @@
             <li class="nav-item"><a class="nav-link" href="{% url 'library_mgmt:my_books' %}"><i class="bi bi-book"></i> My Books</a></li>
           {% endif %}
 
+          {% if user.role == 'APPLICANT' %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'students:applicant_dashboard' %}"><i class="bi bi-person-badge"></i> My Application</a></li>
+          {% endif %}
+
           {% if user.role == 'PARENT' %}
             <li class="nav-item"><a class="nav-link" href="{% url 'finance:my_balance' %}"><i class="bi bi-cash-coin"></i> Fees</a></li>
           {% endif %}

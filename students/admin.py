@@ -1,15 +1,22 @@
 from django.contrib import admin
-from .models import Application, Student, DisciplineRecord, AttendanceRecord
+from .models import Application, Student, DisciplineRecord, AttendanceRecord, ApplicantDocument
 
 
 @admin.register(Application)
 class ApplicationAdmin(admin.ModelAdmin):
-    list_display = ("id", "first_name", "last_name", "applying_for_grade", "status", "submitted_on")
-    list_filter = ("status", "applying_for_grade")
-    search_fields = ("first_name", "last_name", "guardian_name", "guardian_phone")
-    readonly_fields = ("submitted_on", "reviewed_on")
-    # Changing status here to ACCEPTED also auto-creates the Student
-    # record via the pre_save signal in signals.py.
+    list_display = ("id", "first_name", "last_name", "applying_for_grade", "is_submitted", "status", "submitted_on")
+    list_filter = ("status", "is_submitted", "applying_for_grade")
+    search_fields = ("first_name", "last_name", "guardian_name", "guardian_phone", "user__email")
+    readonly_fields = ("submitted_on", "reviewed_on", "user")
+    # Changing status here to ACCEPTED also auto-creates (or converts
+    # the applicant's existing account into) the Student record via
+    # the pre_save signal in signals.py.
+
+
+@admin.register(ApplicantDocument)
+class ApplicantDocumentAdmin(admin.ModelAdmin):
+    list_display = ("label", "application", "uploaded_on")
+    search_fields = ("label", "application__first_name", "application__last_name")
 
 
 @admin.register(Student)
