@@ -76,28 +76,54 @@ class Term(models.Model):
         super().save(*args, **kwargs)
 
 
+class Track(models.TextChoices):
+    """
+    Senior Secondary (grades 10-12) splits into these three tracks.
+    Grades 7-9 (Upper Basic) don't use a track -- NONE.
+    """
+    NONE = "NONE", "N/A (Upper Basic)"
+    SCIENCE = "SCIENCE", "Science"
+    ARTS = "ARTS", "Arts"
+    COMMERCE = "COMMERCE", "Commerce"
+
+
 class SchoolClass(models.Model):
     """
-    A stream, e.g. '7A', '10C'. Grades 7-9 = Upper Basic,
-    10-12 = Senior Secondary, matching the blueprint's 7A-7F ... 12A-12F.
+    A stream, e.g. '7A', '10 Science A'. Grades 7-9 = Upper Basic
+    (no track, just A-F streams). Grades 10-12 = Senior Secondary,
+    split into Science/Arts/Commerce tracks, each of which can still
+    have multiple lettered streams (e.g. '10 Science A', '10 Science B')
+    if a track gets too big for one class.
     """
     GRADE_CHOICES = [(str(g), f"Grade {g}") for g in range(7, 13)]
     STREAM_CHOICES = [(s, s) for s in "ABCDEF"]
 
     grade = models.CharField(max_length=2, choices=GRADE_CHOICES)
     stream = models.CharField(max_length=1, choices=STREAM_CHOICES)
+    track = models.CharField(max_length=10, choices=Track.choices, default=Track.NONE)
+    capacity = models.PositiveIntegerField(default=45, help_text="Max students before auto-arrangement moves to the next stream.")
     class_teacher = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="classes_managed"
     )
     subjects = models.ManyToManyField(Subject, blank=True, related_name="classes")
 
     class Meta:
-        unique_together = ("grade", "stream")
-        ordering = ["grade", "stream"]
+        unique_together = ("grade", "stream", "track")
+        ordering = ["grade", "track", "stream"]
 
     @property
     def label(self):
+        if self.track and self.track != Track.NONE:
+            return f"{self.grade} {self.get_track_display()} {self.stream}"
         return f"{self.grade}{self.stream}"
+
+    @property
+    def current_student_count(self):
+        return self.students.filter(is_active=True).count()
+
+    @property
+    def has_space(self):
+        return self.current_student_count < self.capacity
 
     def __str__(self):
         return self.label

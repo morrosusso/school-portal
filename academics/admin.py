@@ -27,8 +27,8 @@ class TermAdmin(admin.ModelAdmin):
 
 @admin.register(SchoolClass)
 class SchoolClassAdmin(admin.ModelAdmin):
-    list_display = ("label", "grade", "stream", "class_teacher")
-    list_filter = ("grade",)
+    list_display = ("label", "grade", "track", "stream", "class_teacher", "current_student_count", "capacity")
+    list_filter = ("grade", "track")
     filter_horizontal = ("subjects",)
 
 

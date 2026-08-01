@@ -10,7 +10,7 @@ class ApplicationForm(forms.ModelForm):
         model = Application
         fields = [
             "first_name", "last_name", "date_of_birth", "gender", "guardian_name",
-            "guardian_phone", "guardian_email", "address", "applying_for_grade",
+            "guardian_phone", "guardian_email", "address", "applying_for_grade", "applying_for_track",
             "previous_school", "passport_photo",
         ]
         widgets = {
@@ -21,7 +21,8 @@ class ApplicationForm(forms.ModelForm):
             "guardian_phone": forms.TextInput(attrs={"class": "form-control"}),
             "guardian_email": forms.EmailInput(attrs={"class": "form-control"}),
             "address": forms.TextInput(attrs={"class": "form-control"}),
-            "applying_for_grade": forms.Select(attrs={"class": "form-select"}),
+            "applying_for_grade": forms.Select(attrs={"class": "form-select", "id": "id_applying_for_grade"}),
+            "applying_for_track": forms.Select(attrs={"class": "form-select", "id": "id_applying_for_track"}),
             "previous_school": forms.TextInput(attrs={"class": "form-control"}),
         }
 

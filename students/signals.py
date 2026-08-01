@@ -70,6 +70,7 @@ def create_student_on_acceptance(sender, instance: Application, **kwargs):
             guardian_phone=instance.guardian_phone,
             address=instance.address,
             passport_photo=instance.passport_photo,
+            current_class=Student.auto_arrange_class(instance.applying_for_grade, instance.applying_for_track),
         )
 
         instance.reviewed_on = timezone.now()

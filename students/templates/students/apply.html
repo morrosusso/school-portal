@@ -23,4 +23,30 @@
     </div>
   </div>
 </div>
+
+<script>
+  // Track (Science/Arts/Commerce) only matters for Grade 10-12
+  // applicants -- hide it otherwise so Grade 7-9 applicants aren't
+  // confused by an irrelevant field.
+  (function () {
+    var gradeField = document.getElementById("id_applying_for_grade");
+    var trackField = document.getElementById("id_applying_for_track");
+    if (!gradeField || !trackField) return;
+    var trackWrapper = trackField.closest(".col-md-6") || trackField.parentElement;
+
+    function toggleTrack() {
+      var seniorGrades = ["10", "11", "12"];
+      if (seniorGrades.includes(gradeField.value)) {
+        trackWrapper.style.display = "";
+        trackField.required = true;
+      } else {
+        trackWrapper.style.display = "none";
+        trackField.required = false;
+        trackField.value = "";
+      }
+    }
+    gradeField.addEventListener("change", toggleTrack);
+    toggleTrack();
+  })();
+</script>
 {% endblock %}

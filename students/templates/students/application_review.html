@@ -9,7 +9,7 @@
         <tr><th>Name</th><td>{{ application.first_name }} {{ application.last_name }}</td></tr>
         <tr><th>DOB</th><td>{{ application.date_of_birth }}</td></tr>
         <tr><th>Gender</th><td>{{ application.get_gender_display }}</td></tr>
-        <tr><th>Applying for</th><td>Grade {{ application.applying_for_grade }}</td></tr>
+        <tr><th>Applying for</th><td>Grade {{ application.applying_for_grade }}{% if application.applying_for_track %} - {{ application.get_applying_for_track_display }}{% endif %}</td></tr>
         <tr><th>Guardian</th><td>{{ application.guardian_name }} - {{ application.guardian_phone }}</td></tr>
         <tr><th>Address</th><td>{{ application.address }}</td></tr>
         <tr><th>Previous School</th><td>{{ application.previous_school|default:"-" }}</td></tr>
@@ -18,6 +18,11 @@
         <div class="alert alert-success">
           Accepted &mdash; Student ID <strong>{{ application.student_record.student_id }}</strong> was generated automatically,
           along with a login account (username: <code>{{ application.student_record.student_id|lower }}</code>).
+          {% if application.student_record.current_class %}
+            <br>Automatically arranged into class <strong>{{ application.student_record.current_class }}</strong>.
+          {% else %}
+            <br><span class="text-warning">No matching class with space was found &mdash; create the class under Academics &gt; School Classes, or assign manually from the student's record.</span>
+          {% endif %}
         </div>
       {% endif %}
       <form method="post">
